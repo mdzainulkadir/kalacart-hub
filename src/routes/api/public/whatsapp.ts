@@ -68,20 +68,31 @@ function parseJsonFromModel(text: string): Draft | null {
 
 async function callGemini(parts: unknown[]): Promise<string | null> {
   const key = process.env["GEMINI_API_KEY"];
-  if (!key) return null;
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts }] }),
-    },
-  );
-  if (!response.ok) {
-    console.error("gemini error", response.status, await response.text());
+  if (!key) {
+    console.error("[whatsapp] GEMINI_API_KEY is not set — cannot call Gemini");
     return null;
   }
-  const json = (await response.json()) as {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+  const requestBody = JSON.stringify({ contents: [{ parts }] });
+  console.log("[whatsapp] calling Gemini", { url: url.replace(key, "***"), bodyBytes: requestBody.length });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: requestBody,
+    });
+  } catch (error) {
+    console.error("[whatsapp] Gemini fetch threw", error);
+    return null;
+  }
+  const rawText = await response.text();
+  if (!response.ok) {
+    console.error("[whatsapp] Gemini call failed", { status: response.status, rawResponse: rawText });
+    return null;
+  }
+  console.log("[whatsapp] Gemini call succeeded", { status: response.status, rawResponseBytes: rawText.length });
+  const json = JSON.parse(rawText) as {
     candidates?: { content?: { parts?: { text?: string }[] } }[];
   };
   return json.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? null;
