@@ -17,12 +17,16 @@ export function ProductCard({ product, className }: { product: Product; classNam
         className,
       )}
     >
-      <div className="aspect-square overflow-hidden bg-muted">
+      <div className="relative aspect-square overflow-hidden bg-muted">
         <img
           src={product.image_url || fallbackImage(product)}
           alt={product.title}
           loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-foreground/25 to-transparent"
+          aria-hidden="true"
         />
       </div>
       <div className="space-y-2 p-4">
@@ -36,11 +40,11 @@ export function ProductCard({ product, className }: { product: Product; classNam
           </span>
         </p>
         <div className="flex items-center justify-between pt-1">
-          <span className="font-serif text-lg font-bold text-primary">
+          <span className="font-serif text-xl font-bold tracking-tight text-primary">
             {formatINR(product.price)}
           </span>
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Star className="h-3.5 w-3.5 fill-gold text-gold" aria-hidden="true" />
+          <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Star className="h-3 w-3 fill-gold text-gold" aria-hidden="true" />
             {rating.toFixed(1)} ({reviews})
           </span>
         </div>

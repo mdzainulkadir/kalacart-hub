@@ -159,6 +159,31 @@
   }
 }
 
+@layer base {
+  /* Modern pill buttons with a subtle hover lift across the app. */
+  button[data-slot="button"],
+  a[data-slot="button"] {
+    border-radius: 9999px;
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      background-color 180ms ease,
+      color 180ms ease,
+      border-color 180ms ease;
+  }
+
+  button[data-slot="button"]:hover,
+  a[data-slot="button"]:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  button[data-slot="button"]:active,
+  a[data-slot="button"]:active {
+    transform: translateY(0);
+  }
+}
+
 @utility card-lift {
   transition:
     transform 220ms ease,
