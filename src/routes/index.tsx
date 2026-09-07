@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Camera, MessageCircle, Sparkles } from "lucide-react";
+import { Camera, Handshake, MapPin, MessageCircle, Sparkles, Truck } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import heroImage from "@/assets/hero-artisan.jpg";
@@ -106,19 +106,23 @@ function Home() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/40" />
-        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-          <div className="max-w-xl">
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent"
+          aria-hidden="true"
+        />
+        <div className="relative mx-auto max-w-7xl px-4 py-28 sm:px-6 sm:py-36 lg:px-8">
+          <div className="max-w-2xl">
             <p className="mb-4 inline-block rounded-full bg-gold px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gold-foreground">
               Direct from the village
             </p>
-            <h1 className="font-serif text-4xl font-bold leading-tight sm:text-6xl">
+            <h1 className="font-serif text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
               Handmade by artisans. <span className="text-primary">Bought straight</span> from them.
             </h1>
-            <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-xl">
               KalaCart removes the middlemen who take most of a craftsperson's earnings. You meet
               the maker, you know the town, and your money reaches the hands that shaped your piece.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-9 flex flex-wrap gap-3">
               <Button size="lg" onClick={scrollToShop} className="rounded-full px-8">
                 Shop Now
               </Button>
@@ -132,6 +136,20 @@ function Home() {
                   Become a Seller
                 </a>
               </Button>
+            </div>
+            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-medium text-muted-foreground sm:text-sm">
+              <span className="inline-flex items-center gap-1.5">
+                <Truck className="h-4 w-4 text-primary" aria-hidden="true" />
+                Cash on Delivery
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Handshake className="h-4 w-4 text-primary" aria-hidden="true" />
+                Direct to Artisan
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
+                Made in India
+              </span>
             </div>
           </div>
         </div>
