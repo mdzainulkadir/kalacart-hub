@@ -14,7 +14,122 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          buyer_address: string
+          buyer_name: string
+          buyer_phone: string
+          created_at: string
+          id: string
+          order_status: string
+          product_id: string
+          quantity: number
+          selected_size: string
+        }
+        Insert: {
+          buyer_address: string
+          buyer_name: string
+          buyer_phone: string
+          created_at?: string
+          id?: string
+          order_status?: string
+          product_id: string
+          quantity?: number
+          selected_size: string
+        }
+        Update: {
+          buyer_address?: string
+          buyer_name?: string
+          buyer_phone?: string
+          created_at?: string
+          id?: string
+          order_status?: string
+          product_id?: string
+          quantity?: number
+          selected_size?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          materials: string[]
+          price: number
+          seller_location: string
+          seller_name: string
+          seller_phone: string
+          size_options: string[]
+          status: string
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image_url?: string | null
+          materials: string[]
+          price: number
+          seller_location: string
+          seller_name: string
+          seller_phone: string
+          size_options: string[]
+          status?: string
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          materials?: string[]
+          price?: number
+          seller_location?: string
+          seller_name?: string
+          seller_phone?: string
+          size_options?: string[]
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
