@@ -27,7 +27,7 @@ async function notifySeller(params: {
     const sid = process.env["TWILIO_ACCOUNT_SID"];
     const token = process.env["TWILIO_AUTH_TOKEN"];
     if (!sid || !token) return;
-    const from = process.env["TWILIO_WHATSAPP_FROM"] ?? "whatsapp:+14155238886";
+    const from = process.env["TWILIO_WHATSAPP_FROM"] ?? "whatsapp:+17372508034";
     const to = `whatsapp:${params.sellerPhone.replace(/[^\d+]/g, "")}`;
     const body = `📦 New order! ${params.buyerName} ordered ${params.quantity}x ${params.title} (size: ${params.size}). Deliver to: ${params.buyerAddress}. Contact: ${params.buyerPhone}.`;
     await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
