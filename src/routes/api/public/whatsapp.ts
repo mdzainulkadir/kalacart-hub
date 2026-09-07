@@ -101,25 +101,33 @@ async function callGemini(parts: unknown[]): Promise<string | null> {
 const LISTING_PROMPT =
   "You are helping a rural artisan list a handmade product for sale. Based on this image, return ONLY valid JSON: title, description (warm, 2-3 sentences), category (one of: Pottery & Ceramics, Handloom Textiles, Bamboo & Cane Craft, Jewelry, Home Decor, Wooden Toys), materials (array), size_options (array), suggested_price (number, INR).";
 
-async function sendWhatsApp(to: string, body: string) {
+async function sendWhatsApp(sellerPhone: string, body: string) {
+  const sid = process.env["TWILIO_ACCOUNT_SID"];
+  const token = process.env["TWILIO_AUTH_TOKEN"];
+  if (!sid || !token) {
+    console.error("[whatsapp] TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN missing — skipping reply");
+    return;
+  }
+  const fromNumber = "whatsapp:+17372508034";
+  const toNumber = `whatsapp:${sellerPhone.replace(/[^\d+]/g, "")}`;
+  console.log("[whatsapp] sending Twilio reply", { from: fromNumber, to: toNumber, bodyBytes: body.length });
   try {
-    const sid = process.env["TWILIO_ACCOUNT_SID"];
-    const token = process.env["TWILIO_AUTH_TOKEN"];
-    if (!sid || !token) {
-      console.warn("Twilio credentials missing; skipping reply");
-      return;
-    }
-    const from = process.env["TWILIO_WHATSAPP_FROM"] ?? "whatsapp:+17372508034";
-    await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+    const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
       method: "POST",
       headers: {
         Authorization: `Basic ${btoa(`${sid}:${token}`)}`,
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({ From: from, To: to, Body: body }),
+      body: new URLSearchParams({ From: fromNumber, To: toNumber, Body: body }),
     });
+    const rawText = await response.text();
+    if (!response.ok) {
+      console.error("[whatsapp] Twilio reply failed", { status: response.status, rawResponse: rawText });
+      return;
+    }
+    console.log("[whatsapp] Twilio reply sent", { status: response.status, rawResponseBytes: rawText.length });
   } catch (error) {
-    console.error("twilio reply failed", error);
+    console.error("[whatsapp] Twilio fetch threw", error);
   }
 }
 
