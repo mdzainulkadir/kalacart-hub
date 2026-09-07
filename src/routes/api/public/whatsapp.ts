@@ -68,20 +68,31 @@ function parseJsonFromModel(text: string): Draft | null {
 
 async function callGemini(parts: unknown[]): Promise<string | null> {
   const key = process.env["GEMINI_API_KEY"];
-  if (!key) return null;
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts }] }),
-    },
-  );
-  if (!response.ok) {
-    console.error("gemini error", response.status, await response.text());
+  if (!key) {
+    console.error("[whatsapp] GEMINI_API_KEY is not set — cannot call Gemini");
     return null;
   }
-  const json = (await response.json()) as {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+  const requestBody = JSON.stringify({ contents: [{ parts }] });
+  console.log("[whatsapp] calling Gemini", { url: url.replace(key, "***"), bodyBytes: requestBody.length });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: requestBody,
+    });
+  } catch (error) {
+    console.error("[whatsapp] Gemini fetch threw", error);
+    return null;
+  }
+  const rawText = await response.text();
+  if (!response.ok) {
+    console.error("[whatsapp] Gemini call failed", { status: response.status, rawResponse: rawText });
+    return null;
+  }
+  console.log("[whatsapp] Gemini call succeeded", { status: response.status, rawResponseBytes: rawText.length });
+  const json = JSON.parse(rawText) as {
     candidates?: { content?: { parts?: { text?: string }[] } }[];
   };
   return json.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? null;
@@ -90,25 +101,33 @@ async function callGemini(parts: unknown[]): Promise<string | null> {
 const LISTING_PROMPT =
   "You are helping a rural artisan list a handmade product for sale. Based on this image, return ONLY valid JSON: title, description (warm, 2-3 sentences), category (one of: Pottery & Ceramics, Handloom Textiles, Bamboo & Cane Craft, Jewelry, Home Decor, Wooden Toys), materials (array), size_options (array), suggested_price (number, INR).";
 
-async function sendWhatsApp(to: string, body: string) {
+async function sendWhatsApp(sellerPhone: string, body: string) {
+  const sid = process.env["TWILIO_ACCOUNT_SID"];
+  const token = process.env["TWILIO_AUTH_TOKEN"];
+  if (!sid || !token) {
+    console.error("[whatsapp] TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN missing — skipping reply");
+    return;
+  }
+  const fromNumber = "whatsapp:+17372508034";
+  const toNumber = `whatsapp:${sellerPhone.replace(/[^\d+]/g, "")}`;
+  console.log("[whatsapp] sending Twilio reply", { from: fromNumber, to: toNumber, bodyBytes: body.length });
   try {
-    const sid = process.env["TWILIO_ACCOUNT_SID"];
-    const token = process.env["TWILIO_AUTH_TOKEN"];
-    if (!sid || !token) {
-      console.warn("Twilio credentials missing; skipping reply");
-      return;
-    }
-    const from = process.env["TWILIO_WHATSAPP_FROM"] ?? "whatsapp:+17372508034";
-    await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+    const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
       method: "POST",
       headers: {
         Authorization: `Basic ${btoa(`${sid}:${token}`)}`,
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({ From: from, To: to, Body: body }),
+      body: new URLSearchParams({ From: fromNumber, To: toNumber, Body: body }),
     });
+    const rawText = await response.text();
+    if (!response.ok) {
+      console.error("[whatsapp] Twilio reply failed", { status: response.status, rawResponse: rawText });
+      return;
+    }
+    console.log("[whatsapp] Twilio reply sent", { status: response.status, rawResponseBytes: rawText.length });
   } catch (error) {
-    console.error("twilio reply failed", error);
+    console.error("[whatsapp] Twilio fetch threw", error);
   }
 }
 
@@ -158,7 +177,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
             const mediaResponse = await fetch(mediaUrl, { headers: mediaHeaders });
             if (!mediaResponse.ok) {
               await sendWhatsApp(
-                from,
+                sellerPhone,
                 "Sorry, we couldn't process that image. Please try sending a clearer photo.",
               );
               return twiml();
@@ -173,7 +192,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
             const draft = text ? parseJsonFromModel(text) : null;
             if (!draft) {
               await sendWhatsApp(
-                from,
+                sellerPhone,
                 "Sorry, we couldn't process that image. Please try sending a clearer photo.",
               );
               return twiml();
@@ -195,14 +214,14 @@ export const Route = createFileRoute("/api/public/whatsapp")({
             if (error) {
               console.error(error);
               await sendWhatsApp(
-                from,
+                sellerPhone,
                 "Sorry, something went wrong saving your listing. Please try again.",
               );
               return twiml();
             }
 
             await sendWhatsApp(
-              from,
+              sellerPhone,
               draftSummary({ ...draft, price: draft.suggested_price }),
             );
             return twiml();
@@ -221,7 +240,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
           if (body.toLowerCase() === "confirm") {
             if (!latestDraft) {
               await sendWhatsApp(
-                from,
+                sellerPhone,
                 "We couldn't find a draft listing for you yet. Please send a photo of your product first.",
               );
               return twiml();
@@ -232,11 +251,11 @@ export const Route = createFileRoute("/api/public/whatsapp")({
               .eq("id", latestDraft.id);
             if (error) {
               console.error(error);
-              await sendWhatsApp(from, "Something went wrong publishing. Please reply CONFIRM again.");
+              await sendWhatsApp(sellerPhone, "Something went wrong publishing. Please reply CONFIRM again.");
               return twiml();
             }
             await sendWhatsApp(
-              from,
+              sellerPhone,
               `🎉 Congratulations! *${latestDraft.title}* is now live on KalaCart at ₹${Math.round(
                 Number(latestDraft.price),
               )}. Buyers can order it right away and we will message you the moment an order comes in.`,
@@ -247,7 +266,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
           // 3. Any other text -> treat as an edit instruction for the latest draft
           if (!latestDraft) {
             await sendWhatsApp(
-              from,
+              sellerPhone,
               "Please send a photo of your product first, and we'll create your listing for you.",
             );
             return twiml();
@@ -274,7 +293,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
           const updated = text ? parseJsonFromModel(text) : null;
           if (!updated) {
             await sendWhatsApp(
-              from,
+              sellerPhone,
               "Sorry, we couldn't understand that change. Please try again in a few simple words.",
             );
             return twiml();
@@ -293,7 +312,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
             .eq("id", latestDraft.id);
           if (error) console.error(error);
 
-          await sendWhatsApp(from, draftSummary({ ...updated, price: updated.suggested_price }));
+          await sendWhatsApp(sellerPhone, draftSummary({ ...updated, price: updated.suggested_price }));
           return twiml();
         } catch (error) {
           console.error("whatsapp webhook failure", error);
