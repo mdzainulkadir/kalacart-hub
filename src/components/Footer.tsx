@@ -6,8 +6,8 @@ import { BECOME_SELLER_URL } from "@/lib/kalacart";
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-border bg-secondary">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3 lg:px-8">
+    <footer className="mt-32 border-t border-border bg-secondary/70">
+      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-3 md:gap-16 lg:px-8">
         <div className="space-y-4">
           <Logo />
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
