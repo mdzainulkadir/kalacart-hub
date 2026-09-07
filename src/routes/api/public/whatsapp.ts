@@ -177,7 +177,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
             const mediaResponse = await fetch(mediaUrl, { headers: mediaHeaders });
             if (!mediaResponse.ok) {
               await sendWhatsApp(
-                from,
+                sellerPhone,
                 "Sorry, we couldn't process that image. Please try sending a clearer photo.",
               );
               return twiml();
@@ -192,7 +192,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
             const draft = text ? parseJsonFromModel(text) : null;
             if (!draft) {
               await sendWhatsApp(
-                from,
+                sellerPhone,
                 "Sorry, we couldn't process that image. Please try sending a clearer photo.",
               );
               return twiml();
@@ -214,14 +214,14 @@ export const Route = createFileRoute("/api/public/whatsapp")({
             if (error) {
               console.error(error);
               await sendWhatsApp(
-                from,
+                sellerPhone,
                 "Sorry, something went wrong saving your listing. Please try again.",
               );
               return twiml();
             }
 
             await sendWhatsApp(
-              from,
+              sellerPhone,
               draftSummary({ ...draft, price: draft.suggested_price }),
             );
             return twiml();
@@ -240,7 +240,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
           if (body.toLowerCase() === "confirm") {
             if (!latestDraft) {
               await sendWhatsApp(
-                from,
+                sellerPhone,
                 "We couldn't find a draft listing for you yet. Please send a photo of your product first.",
               );
               return twiml();
@@ -251,11 +251,11 @@ export const Route = createFileRoute("/api/public/whatsapp")({
               .eq("id", latestDraft.id);
             if (error) {
               console.error(error);
-              await sendWhatsApp(from, "Something went wrong publishing. Please reply CONFIRM again.");
+              await sendWhatsApp(sellerPhone, "Something went wrong publishing. Please reply CONFIRM again.");
               return twiml();
             }
             await sendWhatsApp(
-              from,
+              sellerPhone,
               `🎉 Congratulations! *${latestDraft.title}* is now live on KalaCart at ₹${Math.round(
                 Number(latestDraft.price),
               )}. Buyers can order it right away and we will message you the moment an order comes in.`,
@@ -266,7 +266,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
           // 3. Any other text -> treat as an edit instruction for the latest draft
           if (!latestDraft) {
             await sendWhatsApp(
-              from,
+              sellerPhone,
               "Please send a photo of your product first, and we'll create your listing for you.",
             );
             return twiml();
@@ -293,7 +293,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
           const updated = text ? parseJsonFromModel(text) : null;
           if (!updated) {
             await sendWhatsApp(
-              from,
+              sellerPhone,
               "Sorry, we couldn't understand that change. Please try again in a few simple words.",
             );
             return twiml();
@@ -312,7 +312,7 @@ export const Route = createFileRoute("/api/public/whatsapp")({
             .eq("id", latestDraft.id);
           if (error) console.error(error);
 
-          await sendWhatsApp(from, draftSummary({ ...updated, price: updated.suggested_price }));
+          await sendWhatsApp(sellerPhone, draftSummary({ ...updated, price: updated.suggested_price }));
           return twiml();
         } catch (error) {
           console.error("whatsapp webhook failure", error);
