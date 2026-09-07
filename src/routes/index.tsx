@@ -188,7 +188,7 @@ function Home() {
       </section>
 
       {/* Trending */}
-      <section className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 pt-24 sm:px-6 lg:px-8">
         <SectionHeading title="Trending Now" subtitle="What buyers are reaching for this week." />
         {isLoading ? (
           <div className="scroll-row">
@@ -206,7 +206,7 @@ function Home() {
       </section>
 
       {/* New arrivals */}
-      <section className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 pt-24 sm:px-6 lg:px-8">
         <SectionHeading title="New Arrivals" subtitle="Freshly listed by artisans across India." />
         {isLoading ? (
           <div className="scroll-row">
