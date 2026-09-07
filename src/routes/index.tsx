@@ -12,11 +12,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { BECOME_SELLER_URL, CATEGORIES, type Product } from "@/lib/kalacart";
 import { cn } from "@/lib/utils";
 
-type Search = { q?: string };
+type Search = { q?: string | undefined };
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): Search => ({
-    q: typeof search.q === "string" && search.q ? search.q : undefined,
+    q: typeof search["q"] === "string" && search["q"] ? (search["q"] as string) : undefined,
   }),
   head: () => ({
     meta: [

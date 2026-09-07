@@ -124,7 +124,7 @@ function Checkout() {
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 placeholder="Ananya Sharma"
               />
-              {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+              {errors["name"] && <p className="text-xs text-destructive">{errors["name"]}</p>}
             </div>
 
             <div className="space-y-2">
@@ -136,7 +136,7 @@ function Checkout() {
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
                 placeholder="House no, street, city, state, PIN code"
               />
-              {errors.address && <p className="text-xs text-destructive">{errors.address}</p>}
+              {errors["address"] && <p className="text-xs text-destructive">{errors["address"]}</p>}
             </div>
 
             <div className="space-y-2">
@@ -148,7 +148,7 @@ function Checkout() {
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 placeholder="+91 98765 43210"
               />
-              {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
+              {errors["phone"] && <p className="text-xs text-destructive">{errors["phone"]}</p>}
             </div>
 
             {failure && (

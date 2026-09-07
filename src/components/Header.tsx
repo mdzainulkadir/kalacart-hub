@@ -11,7 +11,7 @@ import { BECOME_SELLER_URL } from "@/lib/kalacart";
 
 export function Header() {
   const navigate = useNavigate();
-  const search = useSearch({ strict: false }) as { q?: string };
+  const search = useSearch({ strict: false }) as { q?: string | undefined };
   const [term, setTerm] = useState(search.q ?? "");
   const [menuOpen, setMenuOpen] = useState(false);
   const { count } = useCart();

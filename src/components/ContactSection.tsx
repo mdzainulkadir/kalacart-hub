@@ -56,7 +56,7 @@ export function ContactSection() {
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 placeholder="Ananya Sharma"
               />
-              {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+              {errors["name"] && <p className="text-xs text-destructive">{errors["name"]}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="contact-email">Email</Label>
@@ -67,7 +67,7 @@ export function ContactSection() {
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 placeholder="you@example.com"
               />
-              {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
+              {errors["email"] && <p className="text-xs text-destructive">{errors["email"]}</p>}
             </div>
           </div>
           <div className="space-y-2">
@@ -79,7 +79,7 @@ export function ContactSection() {
               onChange={(e) => setForm({ ...form, message: e.target.value })}
               placeholder="Tell us what's on your mind…"
             />
-            {errors.message && <p className="text-xs text-destructive">{errors.message}</p>}
+            {errors["message"] && <p className="text-xs text-destructive">{errors["message"]}</p>}
           </div>
           <Button type="submit" disabled={sending} className="rounded-full px-8">
             {sending ? "Sending…" : "Send message"}
