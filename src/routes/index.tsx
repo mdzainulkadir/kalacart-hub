@@ -167,7 +167,7 @@ function Home() {
       </div>
 
       {/* Categories */}
-      <section id="categories" className="mx-auto max-w-7xl scroll-mt-24 px-4 pt-16 sm:px-6 lg:px-8">
+      <section id="categories" className="mx-auto max-w-7xl scroll-mt-24 px-4 pt-20 sm:px-6 lg:px-8">
         <SectionHeading title="Browse by craft" subtitle="Six living traditions, one marketplace." />
         <div className="flex flex-wrap gap-2.5">
           {["All", ...CATEGORIES].map((c) => (
@@ -175,10 +175,10 @@ function Home() {
               key={c}
               onClick={() => setCategory(c)}
               className={cn(
-                "rounded-full border px-4 py-2 text-sm transition-colors",
+                "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
                 category === c
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-card text-foreground hover:border-primary hover:text-primary",
+                  ? "border-primary bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
+                  : "border-border bg-transparent text-foreground hover:border-primary hover:text-primary",
               )}
             >
               {c}
@@ -224,7 +224,7 @@ function Home() {
       </section>
 
       {/* Grid */}
-      <section id="shop" className="mx-auto max-w-7xl scroll-mt-24 px-4 pt-16 sm:px-6 lg:px-8">
+      <section id="shop" className="mx-auto max-w-7xl scroll-mt-24 px-4 pt-24 sm:px-6 lg:px-8">
         <SectionHeading
           title={category === "All" ? "All crafts" : category}
           subtitle={q ? `Showing results for “${q}”` : "Every piece made by hand, one at a time."}
@@ -270,7 +270,7 @@ function Home() {
       </section>
 
       {/* Become a seller banner */}
-      <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="rounded-xl bg-primary px-6 py-12 text-center text-primary-foreground shadow-[var(--shadow-lift)] sm:px-12">
           <h2 className="font-serif text-3xl font-bold sm:text-4xl">Do you make things by hand?</h2>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed opacity-95 sm:text-base">
