@@ -15,9 +15,9 @@ export function ContactSection() {
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     const next: Record<string, string> = {};
-    if (!form.name.trim()) next.name = "Please tell us your name";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = "Enter a valid email";
-    if (form.message.trim().length < 5) next.message = "Write us a few words";
+    if (!form.name.trim()) next["name"] = "Please tell us your name";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next["email"] = "Enter a valid email";
+    if (form.message.trim().length < 5) next["message"] = "Write us a few words";
     setErrors(next);
     if (Object.keys(next).length > 0) return;
 

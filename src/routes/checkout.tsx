@@ -59,10 +59,10 @@ function Checkout() {
 
   function validate() {
     const next: Record<string, string> = {};
-    if (form.name.trim().length < 2) next.name = "Please enter your full name";
-    if (form.address.trim().length < 10) next.address = "Please enter a complete delivery address";
+    if (form.name.trim().length < 2) next["name"] = "Please enter your full name";
+    if (form.address.trim().length < 10) next["address"] = "Please enter a complete delivery address";
     const digits = form.phone.replace(/\D/g, "");
-    if (digits.length < 10) next.phone = "Enter a valid phone number (at least 10 digits)";
+    if (digits.length < 10) next["phone"] = "Enter a valid phone number (at least 10 digits)";
     setErrors(next);
     return Object.keys(next).length === 0;
   }
