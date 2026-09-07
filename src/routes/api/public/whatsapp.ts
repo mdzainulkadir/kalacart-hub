@@ -98,7 +98,7 @@ async function sendWhatsApp(to: string, body: string) {
       console.warn("Twilio credentials missing; skipping reply");
       return;
     }
-    const from = process.env["TWILIO_WHATSAPP_FROM"] ?? "whatsapp:+14155238886";
+    const from = process.env["TWILIO_WHATSAPP_FROM"] ?? "whatsapp:+17372508034";
     await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
       method: "POST",
       headers: {

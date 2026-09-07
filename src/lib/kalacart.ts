@@ -24,8 +24,8 @@ export const CATEGORIES = [
 ] as const;
 
 /** Twilio WhatsApp sandbox — sellers message this number to start a listing. */
-export const WHATSAPP_SANDBOX_NUMBER = "14155238886";
-export const WHATSAPP_JOIN_CODE = "join kalacart-artisan";
+export const WHATSAPP_SANDBOX_NUMBER = "17372508034";
+export const WHATSAPP_JOIN_CODE = "join twilio-trial";
 export const BECOME_SELLER_URL = `https://wa.me/${WHATSAPP_SANDBOX_NUMBER}?text=${encodeURIComponent(
   WHATSAPP_JOIN_CODE,
 )}`;
