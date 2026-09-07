@@ -153,10 +153,9 @@ export const Route = createFileRoute("/api/public/whatsapp")({
           if (mediaUrl) {
             const sid = process.env["TWILIO_ACCOUNT_SID"];
             const token = process.env["TWILIO_AUTH_TOKEN"];
-            const mediaResponse = await fetch(mediaUrl, {
-              headers:
-                sid && token ? { Authorization: `Basic ${btoa(`${sid}:${token}`)}` } : undefined,
-            });
+            const mediaHeaders: Record<string, string> =
+              sid && token ? { Authorization: `Basic ${btoa(`${sid}:${token}`)}` } : {};
+            const mediaResponse = await fetch(mediaUrl, { headers: mediaHeaders });
             if (!mediaResponse.ok) {
               await sendWhatsApp(
                 from,

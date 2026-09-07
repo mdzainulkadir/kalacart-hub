@@ -71,7 +71,7 @@ function ProductDetail() {
   });
 
   useEffect(() => {
-    if (data?.size_options?.length && !size) setSize(data.size_options[0]);
+    if (data?.size_options?.length && !size) setSize(data.size_options[0] ?? "");
   }, [data, size]);
 
   function add() {
@@ -81,7 +81,7 @@ function ProductDetail() {
       title: data.title,
       price: Number(data.price),
       imageUrl: data.image_url,
-      size: size || data.size_options[0],
+      size: size || data.size_options[0] || "Standard",
       quantity: qty,
       sellerName: data.seller_name,
     });

@@ -52,7 +52,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const idx = prev.findIndex((i) => i.productId === item.productId && i.size === item.size);
       if (idx === -1) return [...prev, item];
       const next = [...prev];
-      next[idx] = { ...next[idx], quantity: next[idx].quantity + item.quantity };
+      const existing = next[idx]!;
+      next[idx] = { ...existing, quantity: existing.quantity + item.quantity };
       return next;
     });
   }, []);
