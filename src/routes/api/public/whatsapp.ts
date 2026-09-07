@@ -112,13 +112,17 @@ async function sendWhatsApp(sellerPhone: string, body: string) {
   const toNumber = `whatsapp:${sellerPhone.replace(/[^\d+]/g, "")}`;
   console.log("[whatsapp] sending Twilio reply", { from: fromNumber, to: toNumber, bodyBytes: body.length });
   try {
+    const params = new URLSearchParams();
+    params.append("To", toNumber);
+    params.append("From", fromNumber);
+    params.append("Body", body);
     const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
       method: "POST",
       headers: {
         Authorization: `Basic ${btoa(`${sid}:${token}`)}`,
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({ From: fromNumber, To: toNumber, Body: body }),
+      body: params,
     });
     const rawText = await response.text();
     if (!response.ok) {
