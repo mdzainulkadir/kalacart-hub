@@ -30,6 +30,30 @@ export function Header() {
       <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
         <Logo />
 
+        <nav className="ml-2 flex items-center gap-1 text-sm font-medium sm:ml-4" aria-label="Primary">
+          <Link
+            to="/"
+            className="rounded-full px-3 py-1.5 transition-colors hover:bg-secondary hover:text-primary"
+            activeOptions={{ exact: true }}
+            activeProps={{ className: "text-primary" }}
+          >
+            Home
+          </Link>
+          <Link
+            to="/"
+            hash="shop"
+            className="hidden rounded-full px-3 py-1.5 transition-colors hover:bg-secondary hover:text-primary lg:inline-block"
+          >
+            Shop
+          </Link>
+          <Link
+            to="/dashboard"
+            className="hidden rounded-full px-3 py-1.5 transition-colors hover:bg-secondary hover:text-primary lg:inline-block"
+          >
+            Sellers
+          </Link>
+        </nav>
+
         <form onSubmit={submit} className="relative ml-auto hidden max-w-sm flex-1 md:block">
           <Search
             className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
@@ -88,6 +112,9 @@ export function Header() {
                 />
               </form>
               <nav className="mt-6 flex flex-col gap-3 text-sm">
+                <Link to="/" onClick={() => setMenuOpen(false)} className="font-semibold">
+                  Home
+                </Link>
                 <Link to="/" hash="shop" onClick={() => setMenuOpen(false)}>
                   Shop all crafts
                 </Link>

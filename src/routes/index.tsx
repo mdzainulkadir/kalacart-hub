@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Camera, Handshake, MapPin, MessageCircle, Sparkles, Truck } from "lucide-react";
+import { Camera, Handshake, MapPin, MessageCircle, Quote, Sparkles, Truck } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import heroImage from "@/assets/hero-artisan.jpg";
@@ -96,10 +96,15 @@ function Home() {
     document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
   }
 
+  function pickCategory(c: string) {
+    setCategory(c);
+    scrollToShop();
+  }
+
   return (
     <PageShell>
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="grain relative overflow-hidden">
         <img
           src={heroImage}
           alt="An artisan shaping a clay pot on a potter's wheel"
@@ -156,50 +161,68 @@ function Home() {
       </section>
 
       {/* Impact stats */}
-      <div className="border-y border-border bg-secondary">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-3 px-4 py-6 text-center text-sm font-medium sm:flex-row sm:gap-8 sm:px-6 lg:px-8">
-          <span>500+ Artisans Empowered</span>
-          <span className="hidden text-primary sm:inline">·</span>
-          <span>6 Craft Categories</span>
-          <span className="hidden text-primary sm:inline">·</span>
-          <span>100% Direct-to-Artisan</span>
+      <div className="border-y border-border bg-teal text-teal-foreground">
+        <div className="mx-auto grid max-w-7xl grid-cols-3 divide-x divide-teal-foreground/15 px-4 sm:px-6 lg:px-8">
+          {[
+            ["500+", "Artisans empowered"],
+            ["6", "Craft categories"],
+            ["100%", "Direct to artisan"],
+          ].map(([n, label]) => (
+            <div key={label} className="px-3 py-5 sm:px-8 sm:py-6">
+              <p className="font-serif text-2xl font-bold leading-none sm:text-3xl">{n}</p>
+              <p className="mt-1.5 text-[11px] uppercase tracking-wider opacity-80 sm:text-xs">
+                {label}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Categories */}
       <section id="categories" className="mx-auto max-w-7xl scroll-mt-24 px-4 pt-20 sm:px-6 lg:px-8">
-        <SectionHeading title="Browse by craft" subtitle="Six living traditions, one marketplace." />
-        <div className="flex flex-wrap gap-2.5">
-          {["All", ...CATEGORIES].map((c) => (
-            <button
-              key={c}
-              onClick={() => setCategory(c)}
-              className={cn(
-                "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                category === c
-                  ? "border-primary bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
-                  : "border-border bg-transparent text-foreground hover:border-primary hover:text-primary",
-              )}
-            >
-              {c}
-            </button>
-          ))}
+        <div className="grid gap-6 lg:grid-cols-[1fr_2fr] lg:items-end">
+          <SectionHeading title="Browse by craft" subtitle="Six living traditions, one marketplace." />
+          <div className="mb-6 flex flex-wrap gap-2.5 lg:justify-end">
+            {["All", ...CATEGORIES].map((c) => (
+              <button
+                key={c}
+                onClick={() => pickCategory(c)}
+                aria-pressed={category === c}
+                className={cn(
+                  "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+                  category === c
+                    ? "border-primary bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
+                    : "border-border bg-transparent text-foreground hover:border-primary hover:text-primary",
+                )}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Trending */}
-      <section className="mx-auto max-w-7xl px-4 pt-24 sm:px-6 lg:px-8">
+      {/* Trending — asymmetric editorial grid */}
+      <section className="mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">
         <SectionHeading title="Trending Now" subtitle="What buyers are reaching for this week." />
         {isLoading ? (
-          <div className="scroll-row">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <ProductCardSkeleton key={i} className="w-64" />
+          <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
+            <ProductCardSkeleton className="col-span-2 row-span-2" />
+            {Array.from({ length: 4 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
             ))}
           </div>
         ) : (
-          <div className="scroll-row">
-            {trending.map((p) => (
-              <ProductCard key={p.id} product={p} className="w-64" />
+          <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
+            {trending.slice(0, 7).map((p, i) => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                className={cn(
+                  i === 0 && "col-span-2 row-span-2",
+                  i === 5 && "md:col-span-2",
+                )}
+              />
             ))}
           </div>
         )}
@@ -269,45 +292,106 @@ function Home() {
         )}
       </section>
 
-      {/* Become a seller banner */}
+      {/* Become a seller — text left, steps right */}
       <section className="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-xl bg-primary px-6 py-12 text-center text-primary-foreground shadow-[var(--shadow-lift)] sm:px-12">
-          <h2 className="font-serif text-3xl font-bold sm:text-4xl">Do you make things by hand?</h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed opacity-95 sm:text-base">
-            List your craft with one WhatsApp message. No forms, no computer, no commission agents —
-            just a photo and a chat.
-          </p>
-          <Button
-            asChild
-            size="lg"
-            variant="secondary"
-            className="mt-7 rounded-full px-9 text-base"
-          >
-            <a href={BECOME_SELLER_URL} target="_blank" rel="noreferrer">
-              Become a Seller
-            </a>
-          </Button>
-        </div>
-
-        <div className="mt-10 grid gap-6 sm:grid-cols-3">
-          {[
-            { icon: MessageCircle, step: "1", text: "Message us on WhatsApp" },
-            { icon: Camera, step: "2", text: "Send a photo of your product" },
-            {
-              icon: Sparkles,
-              step: "3",
-              text: "Our AI creates your listing instantly — you just confirm!",
-            },
-          ].map(({ icon: Icon, step, text }) => (
-            <div
-              key={step}
-              className="rounded-xl border border-border bg-card p-7 text-center shadow-[var(--shadow-soft)]"
-            >
-              <Icon className="mx-auto h-8 w-8 text-primary" aria-hidden="true" />
-              <p className="mt-4 font-serif text-lg font-semibold">Step {step}</p>
-              <p className="mt-1.5 text-sm text-muted-foreground">{text}</p>
+        <div className="grain overflow-hidden rounded-2xl bg-primary text-primary-foreground shadow-[var(--shadow-lift)]">
+          <div className="relative z-10 grid gap-10 px-6 py-12 sm:px-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:py-16">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-80">
+                For artisans
+              </p>
+              <h2 className="mt-3 font-serif text-3xl font-bold leading-tight sm:text-5xl">
+                Do you make things by hand?
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-relaxed opacity-95 sm:text-base">
+                List your craft with one WhatsApp message. No forms, no computer, no commission
+                agents — just a photo and a chat.
+              </p>
+              <Button asChild size="lg" variant="secondary" className="mt-8 rounded-full px-9 text-base">
+                <a href={BECOME_SELLER_URL} target="_blank" rel="noreferrer">
+                  Become a Seller
+                </a>
+              </Button>
             </div>
-          ))}
+
+            <ol className="space-y-3 self-center">
+              {[
+                { icon: MessageCircle, text: "Message us on WhatsApp" },
+                { icon: Camera, text: "Send a photo of your product" },
+                { icon: Sparkles, text: "Our AI creates your listing instantly — you just confirm!" },
+              ].map(({ icon: Icon, text }, i) => (
+                <li
+                  key={text}
+                  className={cn(
+                    "flex items-start gap-4 rounded-xl bg-card/95 p-5 text-card-foreground",
+                    i === 1 && "lg:translate-x-6",
+                  )}
+                >
+                  <span className="font-serif text-3xl font-black leading-none text-primary">
+                    {i + 1}
+                  </span>
+                  <div className="pt-0.5">
+                    <Icon className="mb-1.5 h-5 w-5 text-teal" aria-hidden="true" />
+                    <p className="text-sm font-medium leading-snug">{text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust — craft fair quotes */}
+      <section className="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[1fr_2fr]">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
+              Seen at craft fairs
+            </p>
+            <h2 className="mt-3 font-serif text-3xl font-bold leading-tight sm:text-4xl">
+              Surajkund, Dastkar Bazaar, Shilparamam — and now your doorstep.
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+              Many of our makers first met buyers at India's craft melas. KalaCart keeps that
+              conversation going all year round.
+            </p>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {[
+              {
+                quote:
+                  "The Bankura horse arrived wrapped in newspaper from Panchmura with a note from the potter. I have never felt closer to where a thing came from.",
+                who: "Meera Iyer, Bengaluru",
+              },
+              {
+                quote:
+                  "I sent one photo on WhatsApp and my ikat stoles were listed by evening. Three orders came before the weekend — no agent, no cut.",
+                who: "Padma Reddy, weaver, Pochampally",
+              },
+              {
+                quote:
+                  "Bought the Dhokra jhumkas for my sister's wedding. The wire texture is exactly what I saw at Surajkund last year.",
+                who: "Ritika Sharma, Delhi",
+              },
+            ].map(({ quote, who }, i) => (
+              <figure
+                key={who}
+                className={cn(
+                  "rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]",
+                  i === 1 && "sm:mt-10",
+                  i === 2 && "sm:col-span-2 sm:mr-16",
+                )}
+              >
+                <Quote className="h-5 w-5 text-gold" aria-hidden="true" />
+                <blockquote className="mt-3 font-serif text-base leading-relaxed sm:text-lg">
+                  {quote}
+                </blockquote>
+                <figcaption className="mt-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  — {who}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
         </div>
       </section>
 
