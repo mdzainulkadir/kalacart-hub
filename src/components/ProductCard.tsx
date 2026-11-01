@@ -2,11 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { MapPin, Star } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { fallbackImage, formatINR, ratingFor, type Product } from "@/lib/kalacart";
+import { fallbackImage, formatINR, fromPriceFor, ratingFor, type Product } from "@/lib/kalacart";
+import { useShoppingMode } from "@/lib/mode";
 import { cn } from "@/lib/utils";
 
 export function ProductCard({ product, className }: { product: Product; className?: string }) {
   const { rating, reviews } = ratingFor(product.id);
+  const { isBusiness } = useShoppingMode();
 
   return (
     <Link
@@ -40,9 +42,21 @@ export function ProductCard({ product, className }: { product: Product; classNam
           </span>
         </p>
         <div className="flex items-center justify-between pt-1">
-          <span className="font-serif text-xl font-bold tracking-tight text-primary">
-            {formatINR(product.price)}
-          </span>
+          {isBusiness ? (
+            <span className="font-serif text-lg font-bold tracking-tight text-primary">
+              From {formatINR(fromPriceFor(product))}
+              <span className="text-[11px] font-sans font-medium text-muted-foreground">
+                /unit
+              </span>
+              <span className="ml-1 text-[11px] font-medium text-muted-foreground">
+                · MOQ {product.moq ?? 10}
+              </span>
+            </span>
+          ) : (
+            <span className="font-serif text-xl font-bold tracking-tight text-primary">
+              {formatINR(product.price)}
+            </span>
+          )}
           <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
             <Star className="h-3 w-3 fill-gold text-gold" aria-hidden="true" />
             {rating.toFixed(1)} ({reviews})
