@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -90,12 +90,14 @@ export type Database = {
           id: string
           image_url: string | null
           materials: string[]
+          moq: number
           price: number
           seller_location: string
           seller_name: string
           seller_phone: string
           size_options: string[]
           status: string
+          tier_prices: Json | null
           title: string
         }
         Insert: {
@@ -105,12 +107,14 @@ export type Database = {
           id?: string
           image_url?: string | null
           materials: string[]
+          moq?: number
           price: number
           seller_location: string
           seller_name: string
           seller_phone: string
           size_options: string[]
           status?: string
+          tier_prices?: Json | null
           title: string
         }
         Update: {
@@ -120,15 +124,79 @@ export type Database = {
           id?: string
           image_url?: string | null
           materials?: string[]
+          moq?: number
           price?: number
           seller_location?: string
           seller_name?: string
           seller_phone?: string
           size_options?: string[]
           status?: string
+          tier_prices?: Json | null
           title?: string
         }
         Relationships: []
+      }
+      rfqs: {
+        Row: {
+          company_name: string
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          delivery_city: string
+          gstin: string
+          id: string
+          needed_by: string
+          notes: string | null
+          product_id: string
+          quantity: number
+          quoted_at: string | null
+          quoted_price: number | null
+          short_code: string
+          status: string
+        }
+        Insert: {
+          company_name: string
+          contact_name: string
+          contact_phone: string
+          created_at?: string
+          delivery_city: string
+          gstin: string
+          id?: string
+          needed_by: string
+          notes?: string | null
+          product_id: string
+          quantity: number
+          quoted_at?: string | null
+          quoted_price?: number | null
+          short_code: string
+          status?: string
+        }
+        Update: {
+          company_name?: string
+          contact_name?: string
+          contact_phone?: string
+          created_at?: string
+          delivery_city?: string
+          gstin?: string
+          id?: string
+          needed_by?: string
+          notes?: string | null
+          product_id?: string
+          quantity?: number
+          quoted_at?: string | null
+          quoted_price?: number | null
+          short_code?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rfqs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

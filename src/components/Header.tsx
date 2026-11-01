@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/lib/cart";
 import { BECOME_SELLER_URL } from "@/lib/kalacart";
+import { useShoppingMode } from "@/lib/mode";
+import { cn } from "@/lib/utils";
 
 export function Header() {
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ export function Header() {
   const [term, setTerm] = useState(search.q ?? "");
   const [menuOpen, setMenuOpen] = useState(false);
   const { count } = useCart();
+  const { isBusiness, setMode } = useShoppingMode();
 
   useEffect(() => {
     setTerm(search.q ?? "");
@@ -76,6 +79,29 @@ export function Header() {
         </form>
 
         <div className="ml-auto flex items-center gap-2 md:ml-0">
+          <div
+            className="flex shrink-0 rounded-full border border-border bg-card p-0.5"
+            role="group"
+            aria-label="Shopping mode"
+          >
+            {(["retail", "business"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMode(m)}
+                aria-pressed={isBusiness === (m === "business")}
+                className={cn(
+                  "rounded-full px-2.5 py-1 text-xs font-semibold transition-colors",
+                  isBusiness === (m === "business")
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {m === "retail" ? "Retail" : "Business"}
+              </button>
+            ))}
+          </div>
+
           <Button asChild variant="default" className="hidden rounded-full sm:inline-flex">
             <a href={BECOME_SELLER_URL} target="_blank" rel="noreferrer">
               Become a Seller
