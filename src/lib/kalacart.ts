@@ -77,6 +77,23 @@ export function fromPriceFor(product: Pick<Product, "price" | "moq" | "tier_pric
   return Math.min(Number(product.price), ...tiers.map((t) => t.price));
 }
 
+/** Lowest per-unit bulk price — alias kept for the B2B naming convention. */
+export function fromPrice(product: Pick<Product, "price" | "moq" | "tier_prices">): number {
+  return fromPriceFor(product);
+}
+
+/** Unit price for a quantity: the highest tier whose min is <= qty, or the
+ * base price below the first tier. Safe when tier_prices is null or empty. */
+export function unitPriceFor(
+  product: Pick<Product, "price" | "moq" | "tier_prices">,
+  qty: number,
+): number {
+  const price = Number(product.price);
+  const tiers = tiersFor(product).filter((t) => t.min <= qty);
+  if (tiers.length === 0) return price;
+  return Math.min(price, ...tiers.map((t) => t.price));
+}
+
 export type Rfq = {
   id: string;
   short_code: string;
